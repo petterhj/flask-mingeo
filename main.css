@@ -1,0 +1,146 @@
+/* General */
+body {
+	background-color:		#E5E5E5;
+}
+
+div.columns {
+	min-height:				10px;
+}
+
+
+/* Card */
+div.card {
+	background-color:		#FFF;
+	border-radius:			4px;
+	margin-top:				15px;
+	box-shadow: 			0 3px 3px 0 #DADADA;
+}
+div.card:last-child {
+	margin-bottom:			15px;
+}
+
+
+/* Card: Location */
+div.card.location {
+	padding:				15px;
+	position: 				relative;
+}
+
+div.card.location > div.title {
+	overflow:				auto;
+	margin:					0 0 10px 0;
+}
+div.card.location > div.title > h1 {
+	float:					left;
+	margin:					0;
+	font-size:				18px;
+	color:					#008CBA;
+}
+div.card.location > div.title > h1 > i.fa {
+	width:					22px;
+	text-align:				center;
+}
+div.card.location > div.title > span.label {
+	float:					right;
+	margin:					0 0 0 4px;
+	padding:				6px 8px 6px 8px;
+	display: 				none;
+}
+
+div.card.location > table,
+div.card.location > table * {
+	border:					0;
+	margin:					0;
+	background-color:		inherit;
+	line-height: 			normal;
+}
+div.card.location > table {
+	margin:					0 0 40px 0;
+}
+div.card.location > table hr {
+	border-top:				1px solid #DDDDDD;
+}
+div.card.location > table tr > td {
+	color:					#616161;
+	padding:				7px 5px 7px 5px;
+}
+div.card.location > table tr > td:nth-child(1) > i.fa {
+	width:					30px;
+	text-align:				center;
+	color:					#CCC;
+}
+div.card.location > table tr > td:nth-child(2) {
+	padding-right:			50px;
+	width:					150px;
+	font-weight:			bold;
+}
+div.card.location > table tr > td:nth-child(3) {
+	width:					100%;
+}
+
+div.card.location > a.button {
+	position: 				absolute;
+	bottom:					0;
+	left:					0;
+	width:					100%;
+	margin:					0;
+	padding:				10px 0 10px 0;
+	border-radius:			0 0 4px 4px;
+}
+div.card.location > a.button > span {
+	display: 				inline-block;
+	width:					30px;
+	text-align: 			center;
+}
+div.card.location > a.button > span > i.fa.fa-check {
+	display:				none;
+}
+
+
+/* Card: Map */
+div.card.map {
+	min-height:				300px;
+	background-color:		#CCC;
+}
+
+div.card.map label {
+	width:					auto;
+	display:				inline; 
+}
+div.card.map img { 
+	max-width: 				none; 
+}
+
+
+/* Card: Info */
+div.card.info {
+	padding:				15px;
+	font-size:				11px;
+	color:					#616161;
+	text-shadow: 			1px 1px 1px #FFFFFF;
+	line-height: 			1.2rem;
+}
+div.card.info > i.fa {
+	margin-right:			5px;
+	color:					#CCC;
+}
+
+
+/* Footer */
+footer {
+	margin:					15px 0 15px 0;
+	width:					100%;
+	color:					#C1C1C1;
+	font-size:				11px;
+	text-shadow: 			1px 1px 1px #FFFFFF;
+	text-align: 			center;
+}
+footer > i.fa {
+	margin-right:			3px;
+}
+footer > i.fa:not(:first-child) {
+	margin-left:			20px;
+}
+footer > a {
+	color:					#0078A0;
+}
