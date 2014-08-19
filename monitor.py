@@ -47,8 +47,15 @@ class Server:
 
 
     # Data received
-    def data_received(self, uid, data):
-        print '[DATA][' + uid + ']', data
+    def data_received(self, client, data):
+        print '[DATA][' + client.uid + ']', data
+
+        # Type: Connect
+        if data['type'] == 'connect':
+            print data['monitor']
+
+            if data['monitor']:
+                client.is_monitor = True
 
         # Type: Location
         if data['type'] == 'location':
@@ -64,16 +71,25 @@ class Server:
                     # Broadcast to monitoring clients
                     self.broadcast({
                         'type':     'location',
-                        'client':   uid,
+                        'client':   client.uid,
                         'location': location
-                    })
+                    }, monitors=True)
 
 
     # Broadcast
-    def broadcast(self, data):
-        for client in self.clients:
-            # Send
-            self.clients[client].send(data)
+    def broadcast(self, data, monitors=False):
+        # Only monitors
+        if monitors:
+            for client in self.clients:
+                if self.clients[client].is_monitor:
+                    # Send
+                    self.clients[client].send(data)
+
+        # All clients
+        else:
+            for client in self.clients:
+                # Send
+                self.clients[client].send(data)
 
 
     # Client count
@@ -104,6 +120,7 @@ class Client:
 
         self.id = client.id;
         self.uid = self.id.split('-')[0]
+        self.is_monitor = False
 
 
     # Listen
@@ -122,7 +139,7 @@ class Client:
                         pass
                     else:
                         # Send back to monitor
-                        self.server.data_received(self.uid, data)
+                        self.server.data_received(self, data)
             else:
                 break
 

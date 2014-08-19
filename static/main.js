@@ -396,6 +396,12 @@ var MON = MON || {
 
 	// On connect
 	onConnect: function(instance, evt) {
+		// Client type
+		instance.send(JSON.stringify({
+			'type': 'connect',
+			'monitor': instance.isMonitor
+		}));
+
 		// ID
 		$('span#client').show().find('span').text('?');
 
