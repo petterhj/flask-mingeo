@@ -24,8 +24,12 @@ var LOC = LOC || {
 	// Success
 	locationSuccess: function(card, location) {
 		// Location
-		card.find('td#latitude').text(Number(location.coords.latitude).toFixed(6));
-		card.find('td#longitude').text(Number(location.coords.longitude).toFixed(6));
+		card.find('td#latitude')
+			.find('span').first().text(Number(location.coords.latitude).toFixed(6))
+			.parent().find('span').last().html(LOC.convertLocation(location.coords.latitude, false));
+		card.find('td#longitude')
+			.find('span').first().text(Number(location.coords.longitude).toFixed(6))
+			.parent().find('span').last().html(LOC.convertLocation(location.coords.longitude, true));
 		card.find('td#altitude').text(location.coords.altitude);
 
 		// Time
@@ -175,6 +179,19 @@ var LOC = LOC || {
 				.addClass('hide-for-medium-up')
 				.css('color', updateElement.first().css('background-color'))
 			);
+	},
+
+	// Format conversion
+	convertLocation: function(D, lng) {
+		/* zyklus [http://stackoverflow.com/a/5786281] */
+    	var dms = {
+        	dir : D<0?lng?'W':'S':lng?'E':'N',
+        	deg : 0|(D<0?D=-D:D),
+        	min : 0|D%1*60,
+        	sec :(0|D*60%1*6000)/100
+    	};
+
+    	return dms.dir + dms.deg + '&deg; ' + dms.min + '&#39; ' + dms.sec + '&quot;';
 	},
 
 	// Initialize
