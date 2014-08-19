@@ -1,10 +1,15 @@
-/*	Initialize
+/*  Initialize
   ================================================================================== */
-
-$(document).ready(function(){
-	LOC.init($('div.card.location'));
-	MAP.init($('div.card.map'));
-});
+if (window.jQuery) {
+    $(document).ready(function(){
+    	LOC.init($('div.card.location'));
+        MAP.init($('div.card.map'));
+        MON.init($('div.card.monitor'));
+    });
+}
+else {
+    document.documentElement.className += ' no-jquery';
+}
 
 
 /* 	Location service
@@ -16,26 +21,18 @@ var LOC = LOC || {
 		enableHighAccuracy: true
 	},
 
-	// Support
-	hasSupport: function() {
-		if (navigator.geolocation)
-			return true;
-
-		return false;
-	},
-
 	// Success
 	locationSuccess: function(card, location) {
 		// Location
-		card.find('td#latitude').text(location.coords.latitude);
-		card.find('td#longitude').text(location.coords.longitude);
+		card.find('td#latitude').text(Number(location.coords.latitude).toFixed(6));
+		card.find('td#longitude').text(Number(location.coords.longitude).toFixed(6));
 		card.find('td#altitude').text(location.coords.altitude);
 
 		// Time
 		card.find('td#time').text(moment(location.timestamp).format('DD.MM.YY, HH:mm:ss'));
 
 		// Accuracy
-		LOC.determineAccuracy(card.find('span#accuracy'), location.coords.accuracy);
+		LOC.determineAccuracy(card.find('td#accuracy, span.label#accuracy_text'), Math.round(location.coords.accuracy));
 
 		// Map
 		MAP.updateLocation(location.coords);
@@ -47,35 +44,100 @@ var LOC = LOC || {
 		MAP.getAltitude(card.find('td#altitude'));
 
 		// Enable sharing
-		card.find('a.button.share').removeClass('disabled').click(function() {
-			// Send to server
-			console.log(JSON.stringify(location));
+		card.find('a.button')
+			.removeClass('warning disabled')
+			.addClass('share')
+			.html('<i class="fa fa-location-arrow"></i>Del posisjon');
 
-			// Feedback (purely cosmetic, not very elegant either)
-			$('i.fa-location-arrow').fadeOut(300, function(){$('i.fa-check').fadeIn(600)})
-			setTimeout(function(){ 
-				$('i.fa-check').fadeOut(600, function(){$('i.fa-location-arrow').fadeIn(300)})
-    		}, 3000); 
+		card.find('a.button.share').click(function() {
+			if (!$(this).hasClass('saved')) {
+				// Location
+				var loc = JSON.stringify({
+		            type: 'location',
+		            location: {
+		                timestamp: location.timestamp,
+		                latitude:  location.coords.latitude,
+		                longitude: location.coords.longitude,
+		                altitude:  location.coords.altitude,
+		                accuracy:  location.coords.accuracy 
+		            }
+		        });
+
+				// Send to server
+				if((MON.wsmon) && (MON.wsmon.readyState == 1)) {
+					// Socket
+					MON.send(loc);
+
+					// Close socket (no need for it anymore)
+					console.log('=== CLOSE SOCKET ===');
+					console.log(MON.wsmon);
+					console.log(MON.wsmon.readyState);
+					MON.wsmon.close();
+					console.log(MON.wsmon);
+					console.log(MON.wsmon.readyState);
+					console.log('=== ============ ===');
+				}
+				else {
+					// Post
+					console.log('TODO: FALLBACK');
+
+					/*
+					$.ajax({
+			        	type: 		'POST',
+			        	url: 		'/save',
+			        	dataType: 	'json',
+			        	data: 		JSON.stringify(location),
+			        	
+			        	success: function(data) {	
+							console.log(data);
+						}
+		    		});*/
+				}
+
+				// Disable
+				$(this).addClass('disabled saved success').html('<i class="fa fa-check"></i>Posisjon lagret');
+			}
 		});
 	},
 
 	// Error
 	locationError: function(card, error) {
-		console.log(error);
+		console.log('[ERROR] ' + error.code);
+
+		// No support
+		if (error.code == 0) {
+			card.find('a.button').addClass('alert').html('<i class="fa fa-ban"></i>Din nettleser støtter ikke lokasjonsoppslag');
+		}
+		// Permission denied
+		if (error.code == 1) {
+			console.log('TEST');
+			card.find('a.button').addClass('warning').html('<i class="fa fa-ban"></i>Manglende brukertillatelse (<a href="https://waziggle.com/BrowserAllow.aspx" target="_blank">les mer</a>)');
+		}
+		// Position unavailable
+		if (error.code == 2) {
+			card.find('a.button').addClass('alert').html('<i class="fa fa-times-circle-o"></i>Posisjon utilgjengelig');
+		}
+		// Timeout
+		if (error.code == 3) {
+			card.find('a.button').addClass('alert').html('<i class="fa fa-times-circle-o"></i>Tidsavbrudd');
+		}
 	},
 
 	// Accuracy
 	determineAccuracy: function(updateElement, accuracy) {
 		var color = 'secondary';
 		var text = 'Ukjent grad av nøyaktighet';
+		var smly = 'fa-meh-o';
 
 		if (accuracy >= 3000) {
 			color = 'alert';
 			text = 'Svært lav nøyaktighet';
+			smly = 'fa-frown-o';
 		}
 		if (accuracy >= 1000 && accuracy < 3000) {
 			color = 'alert';
 			text = 'Dårlig nøyaktighet';
+			smly = 'fa-frown-o';
 		}
 		if (accuracy >= 100 && accuracy < 1000) {
 			color = 'warning';
@@ -91,27 +153,34 @@ var LOC = LOC || {
 		if (accuracy >= 10 && accuracy < 25) {
 			color = 'success';
 			text = 'Høy nøyaktighet';
+			smly = 'fa-smile-o';
 		}
 		if (accuracy >= 0 && accuracy < 10) {
 			color = 'success';
 			text = 'Svært høy nøyaktighet';
+			smly = 'fa-smile-o';
 		}
 
-		// Color code
-		updateElement
+		// Accuracy
+		updateElement.first()
 			.addClass(color)
 			.text(text)
-			.show()
-			.next()
-				.text(Math.round(accuracy) + ' m.')
-				.show()
+			.show();
 
+		updateElement.last()
+			.text(accuracy + ' m.')
+			.append($('<i>')
+				.addClass('fa')
+				.addClass(smly)
+				.addClass('hide-for-medium-up')
+				.css('color', updateElement.first().css('background-color'))
+			);
 	},
 
 	// Initialize
 	init: function(card) {
 		// Check support
-        if (this.hasSupport())
+        if ($('html').hasClass('geolocation')) {
         	// Callbacks
         	var locationSuccess = this.locationSuccess;
         	var locationError = this.locationError;
@@ -129,6 +198,11 @@ var LOC = LOC || {
 				// Options
  				this.options
 			);
+		}
+		else {
+			// No support
+			this.locationError(card, {code: 0});
+		}
 	}
 };
 
@@ -154,11 +228,13 @@ var MAP = MAP || {
 		// Set location
 		this.location = new google.maps.LatLng(location.latitude, location.longitude);
 
-		// Marker
-		this.addMarker();
+		if (this.obj) {
+			// Marker
+			this.addMarker();
 
-		// Accuracy radius
-		this.drawAccuracyRadius(location.accuracy);
+			// Accuracy radius
+			this.drawAccuracyRadius(location.accuracy);
+		}
 	},
 
 	// Add marker
@@ -208,10 +284,10 @@ var MAP = MAP || {
 	        map: 			this.obj,
 	        center: 		this.location,
 	        radius: 		accuracy,
-	        strokeColor:  	$('span#accuracy').css('background-color'),
+	        strokeColor:  	$('span#accuracy_text').css('background-color'),
 	        strokeOpacity: 	0.3,
 	        strokeWeight: 	1,
-	        fillColor: 		$('span#accuracy').css('background-color'),
+	        fillColor: 		$('span#accuracy_text').css('background-color'),
 	        fillOpacity: 	0.2
 	    });
 
@@ -221,6 +297,178 @@ var MAP = MAP || {
 
 	// Initialize
 	init: function(card) {
-		this.obj = new google.maps.Map(card[0], this.options);
+		if (card.length)
+			this.obj = new google.maps.Map(card[0], this.options);
 	}
 };
+
+
+/* Monitor
+  ================================================================================== */
+
+var MON = MON || {
+	// Card
+	card: null,
+
+	// Socket
+	wsmon: null,
+
+	// Monitor
+	isMonitor: false,
+
+	// Options
+	options: {
+		server: 'ws://mingeo.no/websocket'
+	},
+
+	// Timer
+	keepAlive: null,
+
+	// Send
+	send: function(msg) {
+		// Pass on
+		if (this.wsmon.readyState == 1) {
+			// Send
+			this.wsmon.send(msg);
+			console.log('[MON][Send] Message sent (' + msg + ')');
+		}
+		else {
+			console.log('[MON][Send] Not connected');
+		}
+	},
+
+	// On message
+	onMessage: function(instance, evt) {
+		// Parse as JSON
+		data = $.parseJSON(evt.data);
+
+		console.log('[MON][Received] ' + JSON.stringify(data));
+
+		// Type
+		switch(data.type) {
+			// Conncted
+			case 'connect':
+      			$('span#client').find('span').text(data.id);
+      		break;
+      		// Client count
+      		case 'clients':
+				$('span#clients').find('span').text(data.count);
+			break;
+			// Location
+			case 'location':
+				$('table > tbody').prepend($('<tr>')
+					.append($('<td>').text(data.location.timestamp))
+					.append($('<td>').text(data.client))
+					.append($('<td>').text(data.location.latitude + ', ' + data.location.longitude))
+				);
+			break;
+			// Error
+			case 'error':
+				console.log('[ERROR] ' + data.message);
+			break;
+  		}
+	},
+
+	// On connect
+	onConnect: function(instance, evt) {
+		// ID
+		$('span#client').show().find('span').text('?');
+
+		// Keep-alive
+		instance.keepAlive = setInterval(function(){
+			// Ping
+			instance.send('ping');
+		}, 30000);
+
+		// Info
+  		if (instance.isMonitor) {
+			// Status
+			$('span#status')
+	  			.html('<i class="fa fa-play"></i>Tilkoblet')
+	  			.removeClass('warning alert')
+	  			.addClass('success');
+
+  			// Playback
+	  		$('span#playback')
+	  			.removeClass('success')
+	  			.addClass('alert')
+	  			.html($('<i>', {class: 'fa fa-stop', title: 'Stopp'}))
+	  			.click(function(){
+					// Disconnect
+					instance.wsmon.close();
+				})
+				.show();
+
+			// Clients
+			$('span#clients').show().find('span').text('?');
+		}
+	},
+
+	// On disconnect
+	onDisconnect: function(instance, evt) {
+		console.log('[Mon] Disconnected');
+
+		// Clear keep alive timer
+		clearTimeout(instance.keepAlive);
+
+		// Status
+		$('span#status')
+  			.html('<i class="fa fa-stop"></i>Frakoblet')
+  			.removeClass('warning success')
+  			.addClass('alert');
+
+  		// Playback
+  		$('span#playback')
+  			.removeClass('alert')
+  			.addClass('success')
+  			.html($('<i>', {class: 'fa fa-play', title: 'Fortsett'}))
+  			.click(function(){
+				// Connect
+				console.log('connect');
+			})
+			.show();
+
+  		// Info
+		$('span#client').hide();
+		$('span#clients').hide();
+	},
+
+	// Initialize
+	init: function(card) {
+		// Instance
+		var instance = this;
+
+		// Card
+		instance.card = card;
+
+		// Client type
+		if (instance.card.length)
+			instance.isMonitor = true;
+
+		// Check support
+        if ($('html').hasClass('websockets')) {
+			// Connect
+			this.wsmon = new WebSocket(instance.options.server);
+
+	       	// Callbacks
+	       	var onConnect = instance.onConnect;
+	       	var onDisconnect = instance.onDisconnect;
+	       	var onMessage = instance.onMessage;
+
+	        this.wsmon.onopen = function(evt) {
+	        	onConnect(instance, evt);
+	        }
+			this.wsmon.onclose = function(evt) {
+				onDisconnect(instance, evt);
+			}
+			this.wsmon.onmessage = function(evt) {
+				onMessage(instance, evt);
+			}
+		}
+		else {
+			// No support
+			console.log('NO WebSocket support');
+			// TODO: Fallback
+		}
+	}
+}

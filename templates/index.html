@@ -1,94 +1,60 @@
-<!doctype html>
+{% include 'header.html' %}
 
-<html class="no-js" lang="no">
- <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Location -->
+<div class="card location">
+ <div class="title">
+  <h1><i class="fa fa-map-marker"></i>Min geografiske posisjon</h1>
+  <span class="label radius show-for-medium-up" id="accuracy_text"></span>
+  <span class="label radius secondary" id="client"><i class="fa fa-user"></i><span></span></span>
+ </div>
 
-  <link rel="icon" href="/static/favicon.png">
-  <title>MinGeo: Hvor er jeg?</title>
+ <table>
+  <tr>
+   <td><i class="fa fa-arrows-h"></i></td>
+   <td>Breddegrad</td>
+   <td id="latitude"></td>
+  </tr>
+  <tr>
+   <td><i class="fa fa-arrows-v"></i></td>
+   <td>Lengdegrad</td>
+   <td id="longitude"></td>
+  </tr>
+  <tr>
+   <td><i class="fa fa-chevron-up"></i></td>
+   <td>Høyde</td>
+   <td id="altitude"></td>
+  </tr>
+  <tr><td colspan="3"><hr></td></tr>
+  <tr>
+   <td><i class="fa fa-flag"></i></td>
+   <td>Adresse</td>
+   <td id="address"></td>
+  </tr>
+  <tr><td colspan="3"><hr></td></tr>
+  <tr>
+   <td><i class="fa fa-crosshairs"></i></td>
+   <td>Nøyaktighet</td>
+   <td id="accuracy"></td>
+  </tr>
+  <tr>
+   <td><i class="fa fa-clock-o"></i></td>
+   <td>Tidspunkt</td>
+   <td id="time"></td>
+  </tr>
+ </table>
 
-  <!-- JS -->
-  <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.3.1/js/foundation.min.js"></script>
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+ <!-- Feedback -->
+ <a class="button disabled warning"><i class="fa fa-spinner fa-spin"></i>Avventer posisjon/tillatelse...</a>
+</div>
 
-  <script src="/static/main.js" type="text/javascript"></script>
+<!-- Map -->
+<div class="card map"></div>
 
-  <!-- CSS -->
-  <link href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.3.1/css/foundation.min.css" type="text/css" rel="stylesheet">
-  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<!-- Info -->
+<div class="card info">
+ <p><i class="fa fa-warning"></i> Tjenesten baserer seg på (mer eller mindre) <b>omtrentlige data</b>, avhengig av bl.a. nettleseregenskaper og din enhets sensorer. Datakvaliteten er videre begrenset av dine innstillinger knyttet til disse egenskapene. Det er følgelig ingen garanti for at oppgitt posisjon er korrekt. Sjekk alltid at dataene stemmer med omgivelsene!</p>
+ <p><i class="fa fa-user"></i> Ingen identifiserende <b>personopplysninger</b> lagres eller prosesseres av denne tjenesten. Det eneste som eventuelt registreres (selvvalgt) er breddegrad, lengegrad, høyde, tidspunkt og nøyaktighet (i meter).</p>
+ <p><i class="fa fa-support"></i> Delte posisjoner kan <a href="/monitor">følges her</a>.</p>
+</div>
 
-  <link href="/static/main.css" rel="stylesheet">
- </head>
-
- <body>
-  <div class="container">
-   <div class="row">
-    <div class="small-0 medium-2 columns show-for-medium-up"></div>
-    <div class="small-12 medium-8 columns" id="main">
-     <!-- Location -->
-     <div class="card location">
-      <div class="title">
-       <h1><i class="fa fa-map-marker"></i> Min posisjon</h1>
-       <span class="label radius" id="accuracy"></span>
-       <span class="label radius secondary" id="accuracy_meter"></span>
-      </div>
-
-      <table>
-       <tr>
-        <td><i class="fa fa-arrows-h"></i></td>
-        <td>Breddegrad</td>
-        <td id="latitude"></td>
-       </tr>
-       <tr>
-        <td><i class="fa fa-arrows-v"></i></td>
-        <td>Lengdegrad</td>
-        <td id="longitude"></td>
-       </tr>
-       <tr>
-        <td><i class="fa fa-chevron-up"></i></td>
-        <td>Høyde</td>
-        <td id="altitude"></td>
-       </tr>
-       <tr><td colspan="3"><hr></td></tr>
-       <tr>
-        <td><i class="fa fa-flag"></i></td>
-        <td>Adresse</td>
-        <td id="address"></td>
-       </tr>
-       <tr><td colspan="3"><hr></td></tr>
-       <tr>
-        <td><i class="fa fa-clock-o"></i></td>
-        <td>Tidspunkt</td>
-        <td id="time"></td>
-       </tr>
-      </table>
-
-      <!-- Share -->
-      <a class="button disabled share"><span><i class="fa fa-location-arrow"></i><i class="fa fa-check"></i></span>Del posisjon</a>
-     </div>
-
-     <!-- Map -->
-     <div class="card map"></div>
-
-     <!-- Info -->
-     <div class="card info">
-      <i class="fa fa-warning"></i> Alle gitte data er <u>omtrentlige</u>, basert bl.a. på din enhets sensorer, og begrenset av lokasjonsinnstillinger. Det er følgelig ingen garanti for at oppgitt posisjon er korrekt. Sjekk alltid at dataene stemmer med omgivelsene!
-     </div>
-
-     <!-- Footer -->
-     <footer>
-      <i class="fa fa-user"></i>
-      <a href="http://www.petterhj.net">Petter Holt Juliussen</a>
-      <i class="fa fa-github"></i>
-      <a href="https://github.com/petterhj/mingeo">GitHub</a>
-     </footer>
-
-    </div>
-    <div class="small-0 medium-2 columns show-for-medium-up"></div>
-   </div>
-  </div>
- </body>
-</html>
+{% include 'footer.html' %}

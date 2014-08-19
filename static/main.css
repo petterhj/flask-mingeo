@@ -7,62 +7,96 @@ div.columns {
 	min-height:				10px;
 }
 
+html > body > div.not-supported {
+	display:				none;
+}
+html.no-jquery > body > div.container {
+	display: 				none;
+}
+html.no-jquery > body > div.not-supported {
+	display:				inline;
+	padding:				30px;
+	background: 			#FFF;
+	width:					100%;
+}
 
 /* Card */
 div.card {
 	background-color:		#FFF;
 	border-radius:			4px;
 	margin-top:				15px;
+	padding:				15px;
+	position: 				relative;
 	box-shadow: 			0 3px 3px 0 #DADADA;
 }
 div.card:last-child {
 	margin-bottom:			15px;
 }
 
-
-/* Card: Location */
-div.card.location {
-	padding:				15px;
-	position: 				relative;
-}
-
-div.card.location > div.title {
+div.card > div.title {
 	overflow:				auto;
 	margin:					0 0 10px 0;
 }
-div.card.location > div.title > h1 {
+div.card > div.title > h1 {
 	float:					left;
 	margin:					0;
 	font-size:				18px;
 	color:					#008CBA;
 }
-div.card.location > div.title > h1 > i.fa {
-	width:					22px;
-	text-align:				center;
+div.card > div.title > h1 > i.fa {
+	margin-right:			10px;
 }
-div.card.location > div.title > span.label {
+div.card > div.title > span.label {
 	float:					right;
 	margin:					0 0 0 4px;
 	padding:				6px 8px 6px 8px;
-	display: 				none;
+}
+div.card > div.title > span.label > i.fa {
+	margin-right:			6px;
 }
 
-div.card.location > table,
-div.card.location > table * {
+div.card > p {
+	font-size:				12px;
+	margin-bottom: 			10px;
+	color:					#616161;
+}
+
+div.card > a.button {
+	margin:					0;
+	padding:				7px 10px 7px 10px;
+}
+
+div.card > table,
+div.card > table * {
 	border:					0;
 	margin:					0;
 	background-color:		inherit;
 	line-height: 			normal;
 }
-div.card.location > table {
-	margin:					0 0 40px 0;
-}
-div.card.location > table hr {
+div.card > table hr {
 	border-top:				1px solid #DDDDDD;
 }
-div.card.location > table tr > td {
+div.card > table tr > td,
+div.card > table tr > th {
 	color:					#616161;
 	padding:				7px 5px 7px 5px;
+}
+div.card > table tr > th {
+	font-weight:			bold;
+}
+div.card > table tr > th > i.fa {
+	color:					#CCC;
+	margin-right:			6px;
+}
+
+
+/* Card: Location */
+div.card.location > div.title > span.label {
+	display:				none;
+}
+
+div.card.location > table {
+	margin:					0 0 40px 0;
 }
 div.card.location > table tr > td:nth-child(1) > i.fa {
 	width:					30px;
@@ -77,23 +111,28 @@ div.card.location > table tr > td:nth-child(2) {
 div.card.location > table tr > td:nth-child(3) {
 	width:					100%;
 }
+div.card.location > table tr > td:nth-child(3) i {
+	float:					right;
+	margin-right:			50%;
+}
 
 div.card.location > a.button {
 	position: 				absolute;
 	bottom:					0;
 	left:					0;
 	width:					100%;
-	margin:					0;
 	padding:				10px 0 10px 0;
 	border-radius:			0 0 4px 4px;
 }
-div.card.location > a.button > span {
-	display: 				inline-block;
-	width:					30px;
-	text-align: 			center;
+div.card.location > a.button > a {
+	color:					#FFF;
+	text-decoration: 		underline;
 }
-div.card.location > a.button > span > i.fa.fa-check {
-	display:				none;
+div.card.location > a.button.warning {
+	background-color: 		#f08a24;
+}
+div.card.location > a.button > i.fa {
+	margin-right:			10px;
 }
 
 
@@ -113,16 +152,46 @@ div.card.map img {
 
 
 /* Card: Info */
-div.card.info {
-	padding:				15px;
-	font-size:				11px;
-	color:					#616161;
-	text-shadow: 			1px 1px 1px #FFFFFF;
-	line-height: 			1.2rem;
+div.card.info > p {
+	position: 				relative;
+	margin:					0;
+	font-size:				10px;
+	color:					#A29E9E;
+	line-height: 			1.1rem;
+	padding:				0 0 4px 22px;
 }
-div.card.info > i.fa {
-	margin-right:			5px;
+div.card.info > p > b {
+	color:					#6F6B6B;
+}
+div.card.info > p > i.fa {
+	position: 				absolute;
+	top:					4px;
+	left:					0;
 	color:					#CCC;
+}
+
+
+/* Card: Monitor */
+div.card.monitor {}
+
+div.card.monitor > div.title > span:not(#status) {
+	display:				none;
+}
+div.card.monitor > div.title > span#playback {
+	cursor:					pointer;
+}
+div.card.monitor > div.title > span#playback > i.fa {
+	margin:					0;
+}
+
+div.card.monitor > table tr > th:nth-child(1) {
+	width:					120px;
+}
+div.card.monitor > table tr > th:nth-child(2) {
+	width:					120px;
+}
+div.card.monitor > table tr > th:nth-child(3) {
+	
 }
 
 

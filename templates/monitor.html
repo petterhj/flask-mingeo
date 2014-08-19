@@ -1,0 +1,72 @@
+{% include 'header.html' %}
+
+<script>
+// var ws;
+
+// $(window).on('beforeunload', function(){
+//     // Disable onclose handler
+//     //websocket.onclose = function () {};
+
+//     // Close connection
+//     //websocket.close()
+
+//     //console.log('test');
+
+//     return "This should create a pop-up";
+// });
+$( window ).unload(function() {
+    // ws.close();
+});
+
+$(document).ready(function() {
+    /* INIT */
+    // MON.init($('div.card.monitor'));
+
+    $('#send-message').submit(function() {
+        /* DUMMY DATA */
+        MON.wsmon.send(JSON.stringify({
+            type: 'location',
+            location: {
+                timestamp: '13212312312',
+                latitude:  '59.913869',
+                longitude: '10.752245',
+                altitude:  '5',
+                accuracy:  '18000' 
+            }
+        }));
+
+        return false;
+  });
+
+});
+</script>
+
+<!-- Monitor -->
+<div class="card monitor">
+ <div class="title">
+  <h1><i class="fa fa-compass"></i>Delte posisjoner</h1>
+  <span class="label radius" id="clients"><i class="fa fa-group"></i><span></span></span>
+  <span class="label radius secondary" id="client"><i class="fa fa-user"></i><span></span></span>
+  <span class="label radius" id="playback"></span>
+  <span class="label radius warning" id="status"><i class="fa fa-spinner fa-spin"></i>Kobler til...</span>
+ </div>
+
+<!-- TEMP -->
+ <form id="send-message">
+  <input type="submit" value="TESTPOSISJON" />
+ </form>
+
+ <!-- Locations -->
+ <table>
+  <thead>
+   <tr>
+    <th><i class="fa fa-clock-o"></i>Tidspunkt</th>
+    <th><i class="fa fa-user"></i>Klient</th>
+    <th><i class="fa fa-location-arrow"></i>Posisjon</th>
+   </tr>
+  </thead>
+  <tbody></tbody>
+ </table>
+</div>
+
+{% include 'footer.html' %}
