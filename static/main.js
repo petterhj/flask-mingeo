@@ -165,6 +165,14 @@ var LOC = LOC || {
 			smly = 'fa-smile-o';
 		}
 
+		// Readable
+		if (accuracy >= 1000) {
+			accuracy = Number(accuracy/1000).toFixed(1) + ' km.';
+		}
+		else {
+			 accuracy = accuracy + ' m.';
+		}
+
 		// Accuracy
 		updateElement.first()
 			.addClass(color)
@@ -172,7 +180,7 @@ var LOC = LOC || {
 			.show();
 
 		updateElement.last()
-			.text(accuracy + ' m.')
+			.text(accuracy)
 			.append($('<i>')
 				.addClass('fa')
 				.addClass(smly)
