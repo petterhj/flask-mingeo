@@ -184,7 +184,6 @@ div.card.info > p > i.fa {
 	color:					#CCC;
 }
 
-
 /* Card: Monitor */
 div.card.monitor {}
 
@@ -206,6 +205,19 @@ div.card.monitor > table tr > th:nth-child(2) {
 }
 div.card.monitor > table tr > th:nth-child(3) {
 	
+}
+
+/* Card: Back */
+div.card.back {
+	padding:				0;
+}
+div.card.back > a.button {
+	border-radius: 			4px;
+	width:					100%;
+	padding:				10px 0 10px 0;
+}
+div.card.back > a.button > i.fa {
+	margin-right:			10px;
 }
 
 
