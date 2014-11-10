@@ -1,5 +1,7 @@
-{% include 'header.html' %}
+{% extends "base.html" %}
 
+{% block title %} | Monitor{% endblock %}
+{% block content %}
 <script>
 // var ws;
 
@@ -68,5 +70,4 @@ $(document).ready(function() {
   <tbody></tbody>
  </table>
 </div>
-
-{% include 'footer.html' %}
+{% endblock %}

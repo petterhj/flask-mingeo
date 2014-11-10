@@ -1,4 +1,6 @@
-{% include 'header.html' %}
+{% extends "base.html" %}
+
+{% block content %}
 
 <!-- Location -->
 <div class="card location">
@@ -56,5 +58,3 @@
  <p><i class="fa fa-user"></i> Ingen identifiserende <b>personopplysninger</b> lagres eller prosesseres av denne tjenesten. Det eneste som eventuelt registreres (selvvalgt) er breddegrad, lengegrad, høyde, tidspunkt og nøyaktighet (i meter).</p>
  <p><i class="fa fa-support"></i> Delte posisjoner kan <a href="/monitor">følges her</a>.</p>
 </div>
-
-{% include 'footer.html' %}
