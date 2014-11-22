@@ -7,7 +7,7 @@ from monitor import Server
 
 
 # App
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 
 # Monitor
@@ -87,6 +87,14 @@ def save():
     return jsonify(out)
     '''
     return jsonify({})
+
+
+# @app.route('/robots.txt')
+# def static_from_root():
+#     print '---------------------------------------------'
+#     print app.static_folder
+#     print '---------------------------------------------'
+#     return send_from_directory(app.static_folder, request.path[1:])
 
 
 #=================================================================
