@@ -54,7 +54,7 @@ var LOC = LOC || {
 		card.find('a.button')
 			.removeClass('warning disabled')
 			.addClass('share')
-			.html('<i class="fa fa-location-arrow"></i>Del posisjon');
+			.html('<i class="fa fa-location-arrow"></i>Del posisjon' + (LOC.shareAddress ? ' (sendes til ' + LOC.shareAddress.replace('_', '@').replace('-', '.') + ')' : ''));
 
 		card.find('a.button.share').click(function() {
 			if (!$(this).hasClass('saved')) {
