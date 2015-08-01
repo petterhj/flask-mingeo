@@ -88,7 +88,7 @@ var LOC = LOC || {
                 }
 
 				// Send to server
-				if((MON.wsmon) && (MON.wsmon.readyState == 1)) {
+				if((MON.wsmons) && (MON.wsmon.readyState == 1)) {
 					// Socket
 					MON.send(JSON.stringify(loc));
 
@@ -100,26 +100,17 @@ var LOC = LOC || {
 					console.log(MON.wsmon);
 					console.log(MON.wsmon.readyState);
 					console.log('=== ============ ===');
+                    
+                    // Disable
+				    $(this).addClass('disabled saved success').html('<i class="fa fa-check"></i>Posisjon lagret');
 				}
 				else {
 					// Post
 					console.log('TODO: FALLBACK');
-
-					/*
-					$.ajax({
-			        	type: 		'POST',
-			        	url: 		'/save',
-			        	dataType: 	'json',
-			        	data: 		JSON.stringify(location),
-			        	
-			        	success: function(data) {	
-							console.log(data);
-						}
-		    		});*/
+                    
+                    // Disable
+				    $(this).addClass('disabled alert').html('<i class="fa fa-times-circle-o"></i>Kunne ikke dele posisjon. Oppfrisk nettleser og prøv igjen');
 				}
-
-				// Disable
-				$(this).addClass('disabled saved success').html('<i class="fa fa-check"></i>Posisjon lagret');
 			}
 		});
 	},
