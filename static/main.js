@@ -466,7 +466,7 @@ var MON = MON || {
   			.html($('<i>', {class: 'fa fa-play', title: 'Fortsett'}))
   			.click(function(){
 				// Connect
-				console.log('connect');
+				MON.init(MON.card);
 			})
 			.show();
 
