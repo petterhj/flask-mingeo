@@ -20,6 +20,9 @@ var LOC = LOC || {
 	options: {
 		enableHighAccuracy: true
 	},
+    
+    // Share address
+    shareAddress: null,
 
 	// Success
 	locationSuccess: function(card, location) {
@@ -56,7 +59,7 @@ var LOC = LOC || {
 		card.find('a.button.share').click(function() {
 			if (!$(this).hasClass('saved')) {
 				// Location
-				var loc = JSON.stringify({
+				var loc = {
 		            type: 'location',
 		            location: {
 		                timestamp: location.timestamp,
@@ -65,12 +68,29 @@ var LOC = LOC || {
 		                altitude:  location.coords.altitude,
 		                accuracy:  location.coords.accuracy 
 		            }
-		        });
+		        };
+                
+                // Send by email
+                if (LOC.shareAddress) {
+                    $.ajax({
+			        	type: 		'POST',
+			        	url: 		'/share',
+			        	dataType: 	'json',
+			        	data: 		JSON.stringify({address: LOC.shareAddress, location: loc.location}),
+                        
+			        	success: function(data) {	
+							console.log(data);
+						},
+                        error: function(data) {
+                            console.log(data);
+                        }
+		    		});
+                }
 
 				// Send to server
 				if((MON.wsmon) && (MON.wsmon.readyState == 1)) {
 					// Socket
-					MON.send(loc);
+					MON.send(JSON.stringify(loc));
 
 					// Close socket (no need for it anymore)
 					console.log('=== CLOSE SOCKET ===');
@@ -488,13 +508,13 @@ var MON = MON || {
 
 	        this.wsmon.onopen = function(evt) {
 	        	onConnect(instance, evt);
-	        }
+	        };
 			this.wsmon.onclose = function(evt) {
 				onDisconnect(instance, evt);
-			}
+			};
 			this.wsmon.onmessage = function(evt) {
 				onMessage(instance, evt);
-			}
+			};
 		}
 		else {
 			// No support
@@ -502,4 +522,4 @@ var MON = MON || {
 			// TODO: Fallback
 		}
 	}
-}
+};
