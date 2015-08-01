@@ -88,7 +88,7 @@ var LOC = LOC || {
                 }
 
 				// Send to server
-				if((MON.wsmons) && (MON.wsmon.readyState == 1)) {
+				if((MON.wsmon) && (MON.wsmon.readyState == 1)) {
 					// Socket
 					MON.send(JSON.stringify(loc));
 
@@ -102,7 +102,7 @@ var LOC = LOC || {
 					console.log('=== ============ ===');
                     
                     // Disable
-				    $(this).addClass('disabled saved success').html('<i class="fa fa-check"></i>Posisjon lagret');
+				    $(this).addClass('disabled saved success').html('<i class="fa fa-check"></i>Posisjon sendt');
 				}
 				else {
 					// Post

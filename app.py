@@ -41,7 +41,7 @@ def index(share_address=None):
 
 # Monitor
 @app.route('/monitor')
-def monitor():
+def monitorview():
     # Return
     return render_template('monitor.html')
 
