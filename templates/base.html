@@ -8,23 +8,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0085B2">
 
-  <link rel="icon" href="/static/favicon.png">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
   <title>Hvor er jeg?{% block title %}{% endblock %}</title>
 
   <!-- CSS -->
-  <link type="text/css" href="/static/foundation-5.3.1.min.css" rel="stylesheet">
+  <link type="text/css" href="{{ url_for('static', filename='foundation-5.3.1.min.css') }}" rel="stylesheet">
   <link type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link type="text/css" href="/static/main.css" rel="stylesheet">
+  <link type="text/css" href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
 
   <!-- JS -->
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
-  <script type="text/javascript" src="/static/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="/static/jquery-2.1.1.min.js"></script>
-  <script type="text/javascript" src="/static/foundation-5.3.1.min.js"></script>
-  <script type="text/javascript" src="/static/moment-2.8.1.min.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='modernizr-2.8.3.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='jquery-2.1.1.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='foundation-5.3.1.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='moment-2.8.1.min.js') }}"></script>
 
-  <script type="text/javascript" src="/static/main.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
  </head>
 
  <body>
