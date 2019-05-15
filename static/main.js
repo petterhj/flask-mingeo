@@ -33,7 +33,7 @@ var LOC = LOC || {
 		card.find('td#longitude')
 			.find('span').first().text(Number(location.coords.longitude).toFixed(6))
 			.parent().find('span').last().html(LOC.convertLocation(location.coords.longitude, true));
-		card.find('td#altitude').text(location.coords.altitude);
+		card.find('td#altitude').text((location.coords.altitude ? location.coords.altitude : '-'));
 
 		// Time
 		card.find('td#time').text(moment(location.timestamp).format('DD.MM.YY, HH:mm:ss'));
@@ -46,9 +46,6 @@ var LOC = LOC || {
 
 		// Address
 		MAP.getAddress(card.find('td#address'));
-
-		// Altitude
-		MAP.getAltitude(card.find('td#altitude'));
 
 		// Enable sharing
 		card.find('a.button')
@@ -249,20 +246,23 @@ var LOC = LOC || {
 var MAP = MAP || {
 	// Object
 	obj: null,
+	geocoder: null,
 
 	// Location
 	location: null,
 
 	// Options
 	options: {
-		center: new google.maps.LatLng(43, 11),
-		zoom:   1
+		center: [60, 11],
+		zoom: 13
 	},
 
 	// Update location
 	updateLocation: function(location) {
+		console.log('Updating location, lat='+location.latitude+', lng='+location.longitude);
+
 		// Set location
-		this.location = new google.maps.LatLng(location.latitude, location.longitude);
+		this.location = [location.latitude, location.longitude];
 
 		if (this.obj) {
 			// Marker
@@ -276,65 +276,68 @@ var MAP = MAP || {
 	// Add marker
 	addMarker: function() {
 		// Marker
-		var marker = new google.maps.Marker({
-            map:        this.obj,
-            animation:  google.maps.Animation.DROP,
-            position:   this.location
-        });
-
-        // Zoom
-        this.obj.setCenter(this.location);
-        this.obj.setZoom(14);
+		L.marker(this.location).addTo(this.obj);
+		this.obj.panTo(this.location);
+		this.obj.setZoom(16);
 	},
 
 	// Get address
 	getAddress: function(updateElement) {
-		var geocoder = new google.maps.Geocoder();
+		console.log('Reverse geocoding location: ' + this.location);
 
-        geocoder.geocode({'latLng': this.location}, function(data, status) {
-            if(status == google.maps.GeocoderStatus.OK){
-            	// Update address
-                updateElement.text(data[1].formatted_address);
-            }
-        });
-	},
+		var location = {lat: this.location[0], lng: this.location[1]};
+		var zoom_level = this.obj.options.crs.scale(18);
 
-	// Get altitude
-	getAltitude: function(updateElement) {
-        var elevator = new google.maps.ElevationService();
+		this.geocoder.reverse(location, zoom_level, function(results) {
+			console.log('Geocoding results: ' + results.length);
 
-        elevator.getElevationForLocations({'locations': [this.location]}, function(results, status) {
-            if (status == google.maps.ElevationStatus.OK) {
-                if (results[0]) {
-                    // Update altitude
-                    updateElement.text(Math.round(results[0].elevation) + ' moh.');
-                }
-            }
-        });
+			if (results[0]) {
+				updateElement.text(results[0].name);
+			}
+		});
 	},
 
 	// Drav accuracy radius
-	drawAccuracyRadius: function(accuracy, color) {
+	drawAccuracyRadius: function(accuracy) {
 		// Draw radius
-		var radius = new google.maps.Circle({
-	        map: 			this.obj,
-	        center: 		this.location,
-	        radius: 		accuracy,
-	        strokeColor:  	$('span#accuracy_text').css('background-color'),
-	        strokeOpacity: 	0.3,
-	        strokeWeight: 	1,
-	        fillColor: 		$('span#accuracy_text').css('background-color'),
-	        fillOpacity: 	0.2
-	    });
-
-	    // Fit bounds
-	    this.obj.fitBounds(radius.getBounds());
+		console.log('Accuracy: '+accuracy);
+		var circle = L.circle(this.location, {
+    		color: 'red',
+    		weight: 1,
+    		opacity: 0.3,
+    		color: $('span#accuracy_text').css('background-color'),
+    		fillColor: $('span#accuracy_text').css('background-color'),
+    		fillOpacity: 0.5,
+    		radius: accuracy
+		}).addTo(this.obj);
 	},
 
 	// Initialize
 	init: function(card) {
-		if (card.length)
-			this.obj = new google.maps.Map(card[0], this.options);
+		if (card.length) {
+			// this.obj = new google.maps.Map(card[0], this.options);
+			this.obj = L.map('map').setView(this.options.center, this.options.zoom);
+
+			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+			    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			    maxZoom: 18,
+			    id: 'mapbox.streets',
+			    accessToken: 'pk.eyJ1Ijoic2xla3ZhayIsImEiOiJjaXE4azdndnQwMDQ4aHhrcWZpM25rcDMxIn0.5ObHw68HeWzfLprlb5M5HA'
+			}).addTo(this.obj);
+
+			this.geocoder = L.Control.Geocoder.nominatim();
+
+			var test = this.geocoder;
+			var map2 = this.obj;
+
+			map2.on('click', function(e) {
+				console.log(e.latlng)
+	        	test.reverse(e.latlng, map2.options.crs.scale(map2.getZoom()), function(results) {
+	          var r = results[0];
+	          console.log(r)
+	          })
+	        });
+		}
 	}
 };
 
