@@ -48,11 +48,11 @@ class Server:
 
     # Data received
     def data_received(self, client, data):
-        print '[DATA][' + client.uid + ']', data
+        print('[DATA][' + client.uid + ']', data)
 
         # Type: Connect
         if data['type'] == 'connect':
-            print data['monitor']
+            print(data['monitor'])
 
             if data['monitor']:
                 client.is_monitor = True
