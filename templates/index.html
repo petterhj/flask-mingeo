@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block js %}
+  LOC.init($('div.card.location'));
+  MAP.init($('div.card.map'));
+  MON.init($('div.card.monitor'));
+{% endblock %}
+
 {% block content %}
 <!-- Location -->
 <div class="card location">

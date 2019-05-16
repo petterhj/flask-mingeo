@@ -27,6 +27,11 @@
   <script type="text/javascript" src="{{ url_for('static', filename='moment-2.8.1.min.js') }}"></script>
 
   <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      {% block js %}{% endblock %}
+    });
+  </script>
  </head>
 
  <body>

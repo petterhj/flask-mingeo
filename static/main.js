@@ -1,15 +1,10 @@
 /*  Initialize
   ================================================================================== */
-if (window.jQuery) {
-    $(document).ready(function(){
-    	LOC.init($('div.card.location'));
-        MAP.init($('div.card.map'));
-        MON.init($('div.card.monitor'));
-    });
-}
-else {
-    document.documentElement.className += ' no-jquery';
-}
+// if (window.jQuery) {
+//     $(document).ready(function(){
+    	
+//         
+//     });
 
 
 /* 	Location service
@@ -267,6 +262,7 @@ var MAP = MAP || {
 
 		var location = {lat: this.location[0], lng: this.location[1]};
 		var zoom_level = this.obj.options.crs.scale(18);
+		console
 
 		this.geocoder.reverse(location, zoom_level, function(results) {
 			console.log('Geocoding results: ' + results.length);
@@ -376,7 +372,7 @@ var MON = MON || {
 			// Location
 			case 'location':
 				$('table > tbody').prepend($('<tr>')
-					.append($('<td>').text(data.location.timestamp))
+					.append($('<td>').text(moment.unix(data.location.timestamp).format('MM.DD.YY - HH:mm')))
 					.append($('<td>').text(data.client))
 					.append($('<td>').text(data.location.latitude + ', ' + data.location.longitude))
 				);
