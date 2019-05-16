@@ -20,9 +20,6 @@ var LOC = LOC || {
 	options: {
 		enableHighAccuracy: true
 	},
-    
-    // Share address
-    shareAddress: null,
 
 	// Success
 	locationSuccess: function(card, location) {
@@ -51,7 +48,7 @@ var LOC = LOC || {
 		card.find('a.button')
 			.removeClass('warning disabled')
 			.addClass('share')
-			.html('<i class="fa fa-location-arrow"></i>Del posisjon' + (LOC.shareAddress ? ' (sendes til ' + LOC.shareAddress.replace('_', '@').replace('-', '.') + ')' : ''));
+			.html('<i class="fa fa-location-arrow"></i>Del posisjon (anonymt)');
 
 		card.find('a.button.share').click(function() {
 			if (!$(this).hasClass('saved')) {
@@ -66,25 +63,8 @@ var LOC = LOC || {
 		                accuracy:  location.coords.accuracy 
 		            }
 		        };
-                
-                // Send by email
-                if (LOC.shareAddress) {
-                    $.ajax({
-			        	type: 		'POST',
-			        	url: 		'/share',
-			        	dataType: 	'json',
-			        	data: 		JSON.stringify({address: LOC.shareAddress, location: loc.location}),
-                        
-			        	success: function(data) {	
-							console.log(data);
-						},
-                        error: function(data) {
-                            console.log(data);
-                        }
-		    		});
-                }
 
-				// Send to server
+				// Send to monitor clients
 				if((MON.wsmon) && (MON.wsmon.readyState == 1)) {
 					// Socket
 					MON.send(JSON.stringify(loc));
